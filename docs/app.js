@@ -9,22 +9,15 @@ const supabase = createClient(supabaseUrl, supabaseKey)
 window.signUp = async () => {
     const email = document.getElementById('email').value
     const password = document.getElementById('password').value
-    const role = document.getElementById('role').value
 
     const { data, error } = await supabase.auth.signUp({
         email,
-        password,
-        options: {
-            data: {
-                role: role
-            }
-        }
+        password
     })
 
     if (error) alert(error.message)
-    else alert('Signup successful! Now login.')
+    else alert('Check email for confirmation!')
 }
-
 
 // LOGIN
 window.login = async () => {
@@ -50,22 +43,12 @@ window.logout = async () => {
 function showUser(user) {
     document.getElementById('auth').style.display = 'none'
     document.getElementById('user').style.display = 'block'
-
-    const role = user.user_metadata.role
-
-    if (role === "admin") {
-        document.getElementById('welcome').innerText =
-        "You are an admin 👑"
-    } else {
-        document.getElementById('welcome').innerText =
-        "You are a common user 🙂"
-    }
+    document.getElementById('welcome').innerText =
+    `Welcome ${user.email}`
 }
-
 
 // CHECK SESSION ON LOAD
 const { data: { session } } =
 await supabase.auth.getSession()
 
 if (session) showUser(session.user)
-
